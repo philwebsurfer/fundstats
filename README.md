@@ -2,4 +2,4 @@
 
 ## Presentation
 
-* (BUGS example)[https://philwebsurfer.github.io/fundstats/exposition.html]
+* [BUGS example](https://philwebsurfer.github.io/fundstats/exposition.html)
