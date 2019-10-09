@@ -18,7 +18,7 @@ model {
   sigma.squared <- pow(sigma, 2)
 
   #the diffuse uniform distributions are done here, as well the log sigma.
-  log(sigma) <- log.sigma
+  log(sigma) <- log.sigma*2
   log.sigma ~ dunif(-10, 10)
 
   #the mean y_0 is being calculated here
