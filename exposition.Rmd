@@ -63,13 +63,17 @@ $$
 
 Data has `NA`s, and those are imputated from their predictive distributions, using the so called _pad out_ strategy. This has the benefit of having no impact on the inferences themselves. The trade off is the computation, and, fortunately in this case, the data is balanced. As all observations are 3 observations per child. We explicitly avoid the _bivariate_ exchangeability assumption, in this model. This model has _univariate_ exchangeability.
 
-### BUGS Model
+### Non-Hierarchical BUGS Model
+
+```{bash echo=FALSE}
+cat expositionb.txt
+```
+
+### Hierarchical BUGS Model
 
 ```{bash echo=FALSE}
 cat exposition.txt
 ```
-
-
 
 ## Data
 
@@ -264,7 +268,7 @@ y0 = c(
 	5.50125821054473, 6.98100574072173, 5.50533153593236)
 ```
 
-The three observations $j$ per child $i$, in log-titre:
+The three follow-ups $j$ per child $i$, in log-titre:
 
 ```{r warning=FALSE, echo=FALSE}
 ggplot(data=data.frame(y)) + 
@@ -384,8 +388,10 @@ parameters<-c("gamma","mu.alpha", "mu.beta",
 #OpenBUGS
 sim<-bugs(data,inits,parameters,model.file="exposition.txt",
               n.iter=5000,n.chains=2,n.burnin=500)
+# sim
 sim
 ```
+
 
 ### Diagnostic and convergence graphs
 
@@ -462,17 +468,44 @@ acf(z)
 ```
 
 
-## Comparison 
+## Comparison & Analisys
 
 Comparison between hierarchical models:
 
-_Todo: complete_
+Hierarchical Model                  |||  Non Hierarchical Model              |||
+--- | --- | --- | --- | --- | --- |
+**_Parameter_** | **_95% interval_** | **_Mean Value_** | **_Mean Value_** | **_95% interval_** | **_Parameter_**
+$\mu_\alpha$ | (`r quantile(sim$sims.list$mu.alpha, 0.025, names=F)`, `r quantile(sim$sims.list$mu.alpha, 1-0.025, names=F)`) | `r mean(sim$sims.list$mu.alpha)` | `r mean(simb$sims.list$alpha)` | (`r quantile(simb$sims.list$alpha, 0.025, names=F)`, `r quantile(simb$sims.list$alpha, 1-0.025, names=F)`) | $\alpha$
+$\mu_\beta$ | (`r quantile(sim$sims.list$mu.beta, 0.025, names=F)`, `r quantile(sim$sims.list$mu.beta, 1-0.025, names=F)`) | `r mean(sim$sims.list$mu.beta)` | `r mean(simb$sims.list$beta)` | (`r quantile(simb$sims.list$beta, 0.025, names=F)`, `r quantile(simb$sims.list$beta, 1-0.025, names=F)`) |  $\beta$
+$\gamma$ | (`r quantile(sim$sims.list$gamma, 0.025, names=F)`, `r quantile(sim$sims.list$gamma, 1-0.025, names=F)`) | `r mean(sim$sims.list$gamma)` | `r mean(simb$sims.list$gamma)` | (`r quantile(simb$sims.list$gamma, 0.025, names=F)`, `r quantile(simb$sims.list$gamma, 1-0.025, names=F)`) | $\gamma$ 
+$\sigma^2$ | (`r quantile(sim$sims.list$sigma.squared, 0.025, names=F)`, `r quantile(sim$sims.list$sigma.squared, 1-0.025, names=F)`) | `r mean(sim$sims.list$sigma.squared)` | `r mean(simb$sims.list$sigma.squared)` | (`r quantile(simb$sims.list$sigma.squared, 0.025, names=F)`, `r quantile(simb$sims.list$sigma.squared, 1-0.025, names=F)`) | $\sigma^2$
+$\omega^2_\alpha$ | (`r quantile(sim$sims.list$omega.alpha.square, 0.025, names=F)`, `r quantile(sim$sims.list$omega.alpha.square, 1-0.025, names=F)`) | `r mean(sim$sims.list$omega.alpha.squared)` 
+$\omega^2_\beta$ | (`r format(quantile(sim$sims.list$omega.beta.squared, 0.025, names=F),scientific=T)`, `r quantile(sim$sims.list$omega.beta.squared, 1-0.025, names=F)`) | `r mean(sim$sims.list$omega.beta.squared)` 
+DIC | - | `r mean(sim$DIC)` | `r mean(simb$DIC)`  | -  | DIC
 
 
-## Analysis
+Recalling both models:
 
-_Todo: complete_
+* Non Hierarchical 
 
+$$ y_{ij} \sim N(\phi_{ij}, \sigma^2)\\
+ \phi_{ij} = \alpha +  \beta(t_{ij} - \overline{t}) + \gamma(y_{0i} - \overline{y_0})\\
+ $$
+
+* Hierarchical
+
+$$
+y_{ij} \sim N(\phi_{ij}, \sigma^2), \\
+\phi_{ij} = \alpha_i + \beta_i (t_{ij} - \overline{t}) + \gamma(y_{0i} - \overline{y_0}),\\
+\alpha_i \sim N(\mu_\alpha, \omega^2_\alpha),\\
+\beta_i  \sim N(\mu_\beta, \omega^2_\beta)
+$$
+
+It is easy to appreciate that both models _capture_ the intercept and slope parameters ($\alpha$/$\mu_\alpha$, $\beta$/$\mu_\beta$ for time and $\gamma$ for titre) are similar in both models, largely due to the linear nature of both. 
+
+What is noteworth is that the variability is greatly reduced in the hierarchical model, about 1/3. This is suggests that the variability can be reduced by allowing child-specific intercepts.
+
+We can remark that the _Deviance Information Criterion_, being a measure of divergence and thereby a comparison between models, show that the hierarchical model is +20% better than the non-hierarchical model, even after the DIC penalizes the less parsimonous model, which is the hierarchical with 94 additional parameters.
 
 ## References
 
