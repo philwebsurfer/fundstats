@@ -1,0 +1,26 @@
+model {
+  #likelihood
+  for (i in 1:N) {
+    for (j in 1:3) {
+      y[i,j]    ~ dnorm(psi[i,j], inv.sigma.squared)
+      psi[i,j] <- alpha + beta*(t[i,j] - tbar)
+                + gamma*(y0[i] - y0bar)
+    }
+  }
+  alpha    ~ dnorm(0, 0.0001)
+  beta     ~ dnorm(0, 0.0001)
+  gamma ~ dnorm(0, 0.0001)
+  
+  #as bugs uses precision, we do that conversion here
+  inv.sigma.squared <- 1/sigma.squared
+
+  #sigma, omega_alpha and omega_beta are squared here
+  sigma.squared <- pow(sigma, 2)
+
+  #the diffuse uniform distributions are done here, as well the log sigma.
+  log(sigma) <- log.sigma
+  log.sigma ~ dunif(-10, 10)
+
+  #the mean y_0 is being calculated here
+  y0bar <- mean(y0[])
+}

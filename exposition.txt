@@ -1,0 +1,36 @@
+model {
+  #likelihood
+  for (i in 1:N) {
+    for (j in 1:3) {
+      y[i,j]    ~ dnorm(psi[i,j], inv.sigma.squared)
+      psi[i,j] <- alpha[i] + beta[i]*(t[i,j] - tbar)
+                + gamma*(y0[i] - y0bar)
+    }
+    alpha[i]    ~ dnorm(mu.alpha, inv.omega.alpha.squared)
+    beta[i]     ~ dnorm(mu.beta, inv.omega.beta.squared)
+  }
+  
+  #as bugs uses precision, we do that conversion here
+  inv.sigma.squared <- 1/sigma.squared
+  inv.omega.alpha.squared <- 1/omega.alpha.squared
+  inv.omega.beta.squared <- 1/omega.beta.squared
+  
+  #sigma, omega_alpha and omega_beta are squared here
+  sigma.squared <- pow(sigma, 2)
+  omega.alpha.squared <- pow(omega.alpha, 2)
+  omega.beta.squared <- pow(omega.beta, 2)
+  
+  #the diffuse uniform distributions are done here, as well the log sigma.
+  log(sigma) <- log.sigma
+  log.sigma ~ dunif(-10, 10)
+  omega.alpha ~ dunif(0, 100)
+  omega.beta ~ dunif(0, 100)
+  
+  #mu_alpha, mu_beta and gamma priors are being defined here
+  mu.alpha ~ dnorm(0, 0.0001)
+  mu.beta ~ dnorm(0, 0.0001)
+  gamma ~ dnorm(0, 0.0001)
+  
+  #the mean y_0 is being calculated here
+  y0bar <- mean(y0[])
+}
