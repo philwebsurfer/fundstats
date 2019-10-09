@@ -1,5 +1,5 @@
 # fundstats - Statistic Foundations
 
-## Exposition and Presentation
+## Presentation
 
-(Exposition)[https://philwebsurfer.github.io/fundstats/exposition.html]
+* (https://philwebsurfer.github.io/fundstats/exposition.html)[BUGS example]
