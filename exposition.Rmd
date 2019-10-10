@@ -1,11 +1,13 @@
 ---
-title: "Exposition"
+title: "Presentation - BUGS Example"
 output:
   html_document:
     df_print: paged
 ---
 
-_175904 -  Jorge III Altamirano Astorga_
+_175904 - Jorge III Altamirano Astorga_
+
+_123972 - Ángel Rafael Ortega Ramírez_
 
 # {.tabset}
 
@@ -513,3 +515,8 @@ We can remark that the _Deviance Information Criterion_, being a measure of dive
 
 * Nieto-Barajas, L. (2019). Notas del Curso de Regresión Avanzada. 
 
+* Carlin, J., Gelman, A., & Stern, H., et al. (2003). Bayesian data analysis. Chapman and Hall/CRC.
+
+* Goldstein, H. (2011). Multilevel statistical models. Oxford: Wiley.
+
+* Congdon, P. (2010). Applied Bayesian hierarchical methods. Boca Raton: CRC Press.
